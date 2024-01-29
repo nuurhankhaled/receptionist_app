@@ -1,19 +1,18 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:easy_localization/easy_localization.dart';
-import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
-import 'package:reservationapp_reseptionist/core/routing/routes.dart';
-import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
-import 'package:reservationapp_reseptionist/core/widgets/custom_text_form_field.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
+import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
+import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
+import 'package:reservationapp_reseptionist/core/widgets/custom_text_form_field.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/add-reservation/cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/calender_cubit/calender_cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/item_additional_options_cubit/additional_options_cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/data/models/items-additional-options-model.dart';
-import 'package:reservationapp_reseptionist/features/View-categories/business-logic/category_cubit/category_cubit.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AddReservationScreen extends StatefulWidget {
@@ -31,9 +30,9 @@ class AddReservationScreen extends StatefulWidget {
 
 class _AddReservationScreenState extends State<AddReservationScreen> {
   List<String> items = ["Item 1", "Item 2", "Item 3", "Item 4"];
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _selectedDate = DateTime.now();
-  Map<DateTime, double> _reservationPercentages = {};
+  final Map<DateTime, double> _reservationPercentages = {};
   List<bool> checkedItems = List.generate(4, (index) => false);
   File? pickedImage;
   TextEditingController timeinputFrom = TextEditingController();
@@ -53,6 +52,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
   Widget build(BuildContext context) {
     ItemAdditionalOptionsCubit.get(context)
         .getItemAdditionalOptions(id: widget.itemId);
+    ReservationCubit.get(context).getAvailabletime(id: widget.itemId);
     print(widget.categoryName);
     print(widget.itemId);
     return BlocConsumer<ItemAdditionalOptionsCubit, ItemAdditionalOptionsState>(
@@ -64,7 +64,11 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
         return BlocConsumer<ReservationCubit, ReservationState>(
           listener: (context, state) {
             if (state is AddReservationSuccess) {
+              hideLoading();
               context.pop();
+            }
+            if (state is AddReservationFailure) {
+              hideLoading();
             }
           },
           builder: (context, state) {
@@ -80,7 +84,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                   return Scaffold(
                     appBar: AppBar(
                       leading: IconButton(
-                        icon: Icon(Icons.arrow_back_ios),
+                        icon: const Icon(Icons.arrow_back_ios),
                         onPressed: () {
                           context.pop();
                         },
@@ -88,11 +92,11 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.home_work_sharp),
+                          const Icon(Icons.home_work_sharp),
                           SizedBox(
                             width: 10.w,
                           ),
-                          Text("اضافه حجز جديد",
+                          const Text("اضافه حجز جديد",
                               style: TextStyle(fontSize: 24),
                               textAlign: TextAlign.center),
                         ],
@@ -100,8 +104,8 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                     ),
                     body: SingleChildScrollView(
                       child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 45, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 45, vertical: 10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment
                               .spaceBetween, // Adjust vertical alignment
@@ -117,7 +121,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 70.w, vertical: 20.h),
-                                      child: Text(
+                                      child: const Text(
                                         "القسيمه اذا كان متزوج",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600),
@@ -188,7 +192,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 70.w, vertical: 20.h),
-                                      child: Text(
+                                      child: const Text(
                                         "تأكيد الدفع",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600),
@@ -272,7 +276,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 100.w),
-                                                  child: Text(
+                                                  child: const Text(
                                                     "لمعرفه الاوقات المتاحه و اختيار يوم الحجز اضغط هنا",
                                                     style: TextStyle(
                                                         color: Colors.blue,
@@ -282,7 +286,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                   ),
                                                 ),
                                                 IconButton(
-                                                  icon: Icon(
+                                                  icon: const Icon(
                                                     Icons.calendar_today,
                                                     color: Colors.blue,
                                                   ),
@@ -293,8 +297,8 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                           Dialog(
                                                         child: Container(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  16),
+                                                              const EdgeInsets
+                                                                  .all(16),
                                                           child: Column(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -328,7 +332,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                   if (date.isAfter(DateTime
                                                                           .now()
                                                                       .subtract(
-                                                                          Duration(
+                                                                          const Duration(
                                                                               days: 1)))) {
                                                                     setState(
                                                                         () {
@@ -363,24 +367,24 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                               Text(
                                                                                 'Free Times on ${_selectedDate.toString().split(' ')[0]}',
                                                                               ),
-                                                                              SizedBox(height: 8),
+                                                                              const SizedBox(height: 8),
                                                                               SizedBox(
                                                                                 height: 480,
                                                                                 width: 200,
                                                                                 child: ListView.builder(
-                                                                                  itemCount: calenderCubit.availableTime!.length,
+                                                                                  itemCount: calenderCubit.availableTime.length,
                                                                                   itemBuilder: (context, index) {
-                                                                                    if (index < calenderCubit.availableTime!.length) {
-                                                                                      print(calenderCubit.availableTime![index].toString());
+                                                                                    if (index < calenderCubit.availableTime.length) {
+                                                                                      print(calenderCubit.availableTime[index].toString());
                                                                                       return (state is GetAvailableTimeLoading)
-                                                                                          ? CustomLoadingIndicator()
+                                                                                          ? const CustomLoadingIndicator()
                                                                                           : ListTile(
-                                                                                              title: Text(" متاح الساعه  :" + calenderCubit.availableTime![index].toString()),
+                                                                                              title: Text(" متاح الساعه  :${calenderCubit.availableTime[index]}"),
                                                                                               // ... other code
                                                                                             );
                                                                                     } else {
                                                                                       // Handle the case when the index is out of bounds
-                                                                                      return SizedBox.shrink(); // or another widget
+                                                                                      return const SizedBox.shrink(); // or another widget
                                                                                     }
                                                                                   },
                                                                                 ),
@@ -399,7 +403,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                       builder:
                                                                           (BuildContext
                                                                               context) {
-                                                                        return AlertDialog(
+                                                                        return const AlertDialog(
                                                                           content:
                                                                               Text("Cannot select a past or current date."),
                                                                         );
@@ -408,7 +412,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                   }
                                                                 },
                                                                 calendarStyle:
-                                                                    CalendarStyle(
+                                                                    const CalendarStyle(
                                                                   // weekendTextStyle: TextStyle(color: Colors.red),
                                                                   selectedTextStyle:
                                                                       TextStyle(
@@ -424,7 +428,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                   // markersColor: Colors.green,
                                                                 ),
                                                                 headerStyle:
-                                                                    HeaderStyle(
+                                                                    const HeaderStyle(
                                                                   formatButtonVisible:
                                                                       true,
                                                                   titleCentered:
@@ -452,14 +456,13 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                     );
                                                   },
                                                 ),
-                                                SizedBox(
+                                                const SizedBox(
                                                   width: 120,
                                                 ),
                                                 if (formattedDate != null)
                                                   Text(
-                                                      "التاريخ المختار هو : " +
-                                                          formattedDate!,
-                                                      style: TextStyle(
+                                                      "التاريخ المختار هو : ${formattedDate!}",
+                                                      style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 17,
@@ -470,7 +473,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                               182)))
                                               ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 50,
                                             ),
                                             Row(
@@ -481,8 +484,8 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 70.w),
-                                                      child: Text(
-                                                        "الاسم",
+                                                      child: const Text(
+                                                        "رقم الهاتف",
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
@@ -494,7 +497,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                           EdgeInsets.symmetric(
                                                               horizontal: 70.w,
                                                               vertical: 20.h),
-                                                      child: Container(
+                                                      child: SizedBox(
                                                         width: 220,
                                                         child:
                                                             CustomTextFormField(
@@ -511,230 +514,317 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                                Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 70.w),
-                                                      child: const Text(
-                                                        " من صباحا",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 30.w,
-                                                              vertical: 40.h),
-                                                      child: Container(
-                                                        width: 190.w,
-                                                        child:
-                                                            CustomTextFormField(
-                                                          readOnly: true,
-                                                          onTap: () async {
-                                                            TimeOfDay?
-                                                                pickedTime =
-                                                                await showTimePicker(
-                                                              initialTime:
-                                                                  TimeOfDay
-                                                                      .now(),
-                                                              context: context,
-                                                            );
+                                                // Column(
+                                                //   children: [
+                                                //     Padding(
+                                                //       padding:
+                                                //           EdgeInsets.symmetric(
+                                                //               horizontal: 70.w),
+                                                //       child: const Text(
+                                                //         " من صباحا",
+                                                //         style: TextStyle(
+                                                //             fontWeight:
+                                                //                 FontWeight
+                                                //                     .bold),
+                                                //       ),
+                                                //     ),
+                                                //     Padding(
+                                                //       padding:
+                                                //           EdgeInsets.symmetric(
+                                                //               horizontal: 30.w,
+                                                //               vertical: 40.h),
+                                                //       child: SizedBox(
+                                                //         width: 190.w,
+                                                //         child:
+                                                //             CustomTextFormField(
+                                                //           readOnly: true,
+                                                //           onTap: () async {
+                                                //             TimeOfDay?
+                                                //                 pickedTime =
+                                                //                 await showTimePicker(
+                                                //               initialTime:
+                                                //                   TimeOfDay
+                                                //                       .now(),
+                                                //               context: context,
+                                                //             );
 
-                                                            if (pickedTime !=
-                                                                null) {
-                                                              // Explicitly set the locale to English when formatting and parsing
-                                                              String
-                                                                  formattedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss',
-                                                                          'en_US')
-                                                                      .format(
-                                                                DateTime(
-                                                                  2024,
-                                                                  1,
-                                                                  1,
-                                                                  pickedTime
-                                                                      .hour,
-                                                                  pickedTime
-                                                                      .minute,
-                                                                ),
-                                                              );
+                                                //             if (pickedTime !=
+                                                //                 null) {
+                                                //               // Explicitly set the locale to English when formatting and parsing
+                                                //               String
+                                                //                   formattedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss',
+                                                //                           'en_US')
+                                                //                       .format(
+                                                //                 DateTime(
+                                                //                   2024,
+                                                //                   1,
+                                                //                   1,
+                                                //                   pickedTime
+                                                //                       .hour,
+                                                //                   pickedTime
+                                                //                       .minute,
+                                                //                 ),
+                                                //               );
 
-                                                              print(
-                                                                  formattedTime);
+                                                //               print(
+                                                //                   formattedTime);
 
-                                                              DateTime
-                                                                  parsedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss',
-                                                                          'en_US')
-                                                                      .parse(
-                                                                formattedTime,
-                                                              );
-                                                              // Converting to DateTime so that we can further format on a different pattern.
-                                                              print(
-                                                                  parsedTime); // Output: 1970-01-01 22:53:00.000
-                                                              String
-                                                                  finalFormattedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss')
-                                                                      .format(
-                                                                          parsedTime);
-                                                              print(
-                                                                  finalFormattedTime); // Output: 14:59:00
-                                                              // DateFormat() is from the intl package, and you can format the time in any pattern you need.
+                                                //               DateTime
+                                                //                   parsedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss',
+                                                //                           'en_US')
+                                                //                       .parse(
+                                                //                 formattedTime,
+                                                //               );
+                                                //               // Converting to DateTime so that we can further format on a different pattern.
+                                                //               print(
+                                                //                   parsedTime); // Output: 1970-01-01 22:53:00.000
+                                                //               String
+                                                //                   finalFormattedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss')
+                                                //                       .format(
+                                                //                           parsedTime);
+                                                //               print(
+                                                //                   finalFormattedTime); // Output: 14:59:00
+                                                //               // DateFormat() is from the intl package, and you can format the time in any pattern you need.
 
-                                                              setState(() {
-                                                                timeinputFrom
-                                                                        .text =
-                                                                    formattedTime; // Set the value of the text field.
-                                                              });
-                                                            } else {
-                                                              print(
-                                                                  "Time is not selected");
-                                                            }
-                                                          },
-                                                          controller:
-                                                              timeinputFrom,
-                                                          prefixIcon: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 7),
-                                                            child: Icon(
-                                                              Icons.timer,
-                                                              size: 25,
-                                                            ),
-                                                          ),
-                                                          backgroundColor:
-                                                              Colors.grey[300],
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 8,
-                                                                  left: 10.w,
-                                                                  right: 10.w),
-                                                          height: 80.h,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 70.w),
-                                                      child: const Text(
-                                                        " الي مساءا",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 30.w,
-                                                              vertical: 40.h),
-                                                      child: Container(
-                                                        width: 190.w,
-                                                        child:
-                                                            CustomTextFormField(
-                                                          readOnly: true,
-                                                          onTap: () async {
-                                                            TimeOfDay?
-                                                                pickedTime =
-                                                                await showTimePicker(
-                                                              initialTime:
-                                                                  TimeOfDay
-                                                                      .now(),
-                                                              context: context,
-                                                            );
+                                                //               setState(() {
+                                                //                 timeinputFrom
+                                                //                         .text =
+                                                //                     formattedTime; // Set the value of the text field.
+                                                //               });
+                                                //             } else {
+                                                //               print(
+                                                //                   "Time is not selected");
+                                                //             }
+                                                //           },
+                                                //           controller:
+                                                //               timeinputFrom,
+                                                //           prefixIcon:
+                                                //               const Padding(
+                                                //             padding:
+                                                //                 EdgeInsets.only(
+                                                //                     top: 7),
+                                                //             child: Icon(
+                                                //               Icons.timer,
+                                                //               size: 25,
+                                                //             ),
+                                                //           ),
+                                                //           backgroundColor:
+                                                //               Colors.grey[300],
+                                                //           padding:
+                                                //               EdgeInsets.only(
+                                                //                   bottom: 8,
+                                                //                   left: 10.w,
+                                                //                   right: 10.w),
+                                                //           height: 80.h,
+                                                //         ),
+                                                //       ),
+                                                //     )
+                                                //   ],
+                                                // ),
 
-                                                            if (pickedTime !=
-                                                                null) {
-                                                              // Explicitly set the locale to English when formatting and parsing
-                                                              String
-                                                                  formattedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss',
-                                                                          'en_US')
-                                                                      .format(
-                                                                DateTime(
-                                                                    2024,
-                                                                    1,
-                                                                    1,
-                                                                    pickedTime
-                                                                        .hour,
-                                                                    pickedTime
-                                                                        .minute),
-                                                              );
-                                                              print(
-                                                                  formattedTime);
-                                                              DateTime
-                                                                  parsedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss',
-                                                                          'en_US')
-                                                                      .parse(
-                                                                formattedTime,
-                                                              );
-                                                              //converting to DateTime so that we can further format on different pattern.
-                                                              print(
-                                                                  parsedTime); //output 1970-01-01 22:53:00.000
-                                                              String
-                                                                  finalFormattedTime =
-                                                                  DateFormat(
-                                                                          'HH:mm:ss')
-                                                                      .format(
-                                                                          parsedTime);
-                                                              print(
-                                                                  finalFormattedTime); //output 14:59:00
-                                                              //DateFormat() is from intl package, you can format the time on any pattern you need.
-                                                              setState(() {
-                                                                timeinputTo
-                                                                        .text =
-                                                                    formattedTime; //set the value of text field.
-                                                                print(
-                                                                    timeinputTo
-                                                                        .text);
-                                                              });
-                                                            } else {
-                                                              print(
-                                                                  "Time is not selected");
-                                                            }
-                                                          },
-                                                          controller:
-                                                              timeinputTo,
-                                                          prefixIcon: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 7),
-                                                            child: Icon(
-                                                              Icons.timer,
-                                                              size: 25,
-                                                            ),
-                                                          ),
-                                                          backgroundColor:
-                                                              Colors.grey[300],
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 8,
-                                                                  left: 10.w,
-                                                                  right: 10.w),
-                                                          height: 80.h,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
+                                                // Column(
+                                                //   children: [
+                                                //     Padding(
+                                                //       padding:
+                                                //           EdgeInsets.symmetric(
+                                                //               horizontal: 70.w),
+                                                //       child: const Text(
+                                                //         " الي مساءا",
+                                                //         style: TextStyle(
+                                                //             fontWeight:
+                                                //                 FontWeight
+                                                //                     .bold),
+                                                //       ),
+                                                //     ),
+                                                //     Padding(
+                                                //       padding:
+                                                //           EdgeInsets.symmetric(
+                                                //               horizontal: 30.w,
+                                                //               vertical: 40.h),
+                                                //       child: SizedBox(
+                                                //         width: 190.w,
+                                                //         child:
+                                                //             CustomTextFormField(
+                                                //           readOnly: true,
+                                                //           onTap: () async {
+                                                //             TimeOfDay?
+                                                //                 pickedTime =
+                                                //                 await showTimePicker(
+                                                //               initialTime:
+                                                //                   TimeOfDay
+                                                //                       .now(),
+                                                //               context: context,
+                                                //             );
+
+                                                //             if (pickedTime !=
+                                                //                 null) {
+                                                //               // Explicitly set the locale to English when formatting and parsing
+                                                //               String
+                                                //                   formattedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss',
+                                                //                           'en_US')
+                                                //                       .format(
+                                                //                 DateTime(
+                                                //                     2024,
+                                                //                     1,
+                                                //                     1,
+                                                //                     pickedTime
+                                                //                         .hour,
+                                                //                     pickedTime
+                                                //                         .minute),
+                                                //               );
+                                                //               print(
+                                                //                   formattedTime);
+                                                //               DateTime
+                                                //                   parsedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss',
+                                                //                           'en_US')
+                                                //                       .parse(
+                                                //                 formattedTime,
+                                                //               );
+                                                //               //converting to DateTime so that we can further format on different pattern.
+                                                //               print(
+                                                //                   parsedTime); //output 1970-01-01 22:53:00.000
+                                                //               String
+                                                //                   finalFormattedTime =
+                                                //                   DateFormat(
+                                                //                           'HH:mm:ss')
+                                                //                       .format(
+                                                //                           parsedTime);
+                                                //               print(
+                                                //                   finalFormattedTime); //output 14:59:00
+                                                //               //DateFormat() is from intl package, you can format the time on any pattern you need.
+                                                //               setState(() {
+                                                //                 timeinputTo
+                                                //                         .text =
+                                                //                     formattedTime; //set the value of text field.
+                                                //                 print(
+                                                //                     timeinputTo
+                                                //                         .text);
+                                                //               });
+                                                //             } else {
+                                                //               print(
+                                                //                   "Time is not selected");
+                                                //             }
+                                                //           },
+                                                //           controller:
+                                                //               timeinputTo,
+                                                //           prefixIcon:
+                                                //               const Padding(
+                                                //             padding:
+                                                //                 EdgeInsets.only(
+                                                //                     top: 7),
+                                                //             child: Icon(
+                                                //               Icons.timer,
+                                                //               size: 25,
+                                                //             ),
+                                                //           ),
+                                                //           backgroundColor:
+                                                //               Colors.grey[300],
+                                                //           padding:
+                                                //               EdgeInsets.only(
+                                                //                   bottom: 8,
+                                                //                   left: 10.w,
+                                                //                   right: 10.w),
+                                                //           height: 80.h,
+                                                //         ),
+                                                //       ),
+                                                //     )
+                                                //   ],
+                                                // ),
+
                                                 SizedBox(
+                                                  height: 500,
+                                                  width: 300,
+                                                  child: ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        addReservationCubit
+                                                            .availabetime
+                                                            .length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Container(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    "التاريخ  :  "),
+                                                                Text(addReservationCubit
+                                                                    .availabetime[
+                                                                        index]
+                                                                    .date!),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Text(
+                                                                    "السعر :"),
+                                                                Text(addReservationCubit
+                                                                    .availabetime[
+                                                                        index]
+                                                                    .price!),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                        "من :"),
+                                                                    Text(addReservationCubit
+                                                                        .availabetime[
+                                                                            index]
+                                                                        .availableTimeFrom!),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                        "الي :"),
+                                                                    Text(addReservationCubit
+                                                                        .availabetime[
+                                                                            index]
+                                                                        .availableTimeTo!),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+
+                                                const SizedBox(
                                                   width: 65,
                                                 ),
                                                 Column(
@@ -744,7 +834,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                           EdgeInsets.symmetric(
                                                               horizontal:
                                                                   100.w),
-                                                      child: Text(
+                                                      child: const Text(
                                                         "الاضافات",
                                                         style: TextStyle(
                                                             fontWeight:
@@ -752,7 +842,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                             fontSize: 17),
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    const SizedBox(
                                                       height: 20,
                                                     ),
                                                     Container(
@@ -795,6 +885,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                       //     );
                                                       //   },
                                                       // ),
+
                                                       child: ListView.builder(
                                                         itemCount: addOp
                                                             .additionalOptions
@@ -868,7 +959,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                     SizedBox(
                                       height: 50.h,
                                     ),
-                                    Row(
+                                    const Row(
                                       children: [
                                         /////////////////////////////////////
                                       ],
@@ -886,17 +977,35 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                               children: [
                                 ElevatedButton(
                                     onPressed: () {
-                                      List<String> selectedItems = [];
-                                      for (int i = 0;
-                                          i < checkedItems.length;
-                                          i++) {
-                                        if (checkedItems[i]) {
-                                          selectedItems.add(items[i]);
-                                        }
-                                      }
-                                      print(selectedItems);
+                                      // List<String> selectedItems = [];
+                                      // for (int i = 0;
+                                      //     i < checkedItems.length;
+                                      //     i++) {
+                                      //   if (checkedItems[i]) {
+                                      //     selectedItems.add(items[i]);
+                                      //   }
+                                      // }
+                                      // print(selectedItems);
+                                      ReservationCubit.get(context)
+                                          .AddReservation(
+                                        category_name: widget.categoryName,
+                                        itemId: widget.itemId,
+                                        paid: 120.toString(),
+                                        additionalOptions: "ss",
+                                        image: ReservationCubit.get(context)
+                                            .pickedImage,
+                                        time: DateTime.now().toString(),
+                                        timeOfReservationfrom:
+                                            addReservationCubit.availabetime[0]
+                                                .availableTimeFrom!,
+                                        timeOfReservationto: addReservationCubit
+                                            .availabetime[0].availableTimeTo!,
+                                        price: addReservationCubit
+                                            .availabetime[0].price,
+                                        userid: '14',
+                                      );
                                     },
-                                    child: Text("اضافه")),
+                                    child: const Text("اضافه")),
                                 SizedBox(
                                   width: 50.w,
                                 ),
@@ -907,7 +1016,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                     onPressed: () {
                                       context.pop();
                                     },
-                                    child: Text("الغاء")),
+                                    child: const Text("الغاء")),
                               ],
                             )
                           ],

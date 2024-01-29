@@ -22,5 +22,9 @@ class PickImageSuccessState extends ReservationState {}
 
 class PickImageErrorState extends ReservationState {
   final String error;
-  PickImageErrorState(this.error);
+  const PickImageErrorState(this.error);
 }
+
+class GetAvailableTimeReservationLoading extends ReservationState {}
+class GetAvailableTimeReservationSuccess extends ReservationState {}
+class GetAvailableTimeReservationError extends ReservationState {}

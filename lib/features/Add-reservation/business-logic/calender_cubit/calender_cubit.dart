@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:dio/dio.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:reservationapp_reseptionist/core/Api/my_http.dart';
-import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/data/models/calender-model.dart';
+
 import '../../../../Core/Api/endPoints.dart'; // Import the library that defines 'getCategories'.
-import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
+
 part 'calender_state.dart';
 
 class CalenderCubit extends Cubit<CalenderState> {
@@ -29,7 +27,7 @@ class CalenderCubit extends Cubit<CalenderState> {
       });
       print("-----------------  getCategories  -----------------");
       print(response!.statusCode);
-      if (response!.statusCode == 200) {
+      if (response.statusCode == 200) {
         print(response.data);
         // var decodedData = json.decode(response.data);
         // var jsonResponse = CategoryModel.fromJson(response.data);
