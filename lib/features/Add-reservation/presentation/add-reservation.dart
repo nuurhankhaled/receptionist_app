@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reservationapp_reseptionist/core/cache_helper/cache_helper.dart';
 import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
 import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
@@ -14,6 +15,8 @@ import 'package:reservationapp_reseptionist/features/Add-reservation/business-lo
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/item_additional_options_cubit/additional_options_cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/data/models/items-additional-options-model.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../../../core/functions/salary_function.dart';
 
 class AddReservationScreen extends StatefulWidget {
   AddReservationScreen({
@@ -38,11 +41,18 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
   TextEditingController timeinputFrom = TextEditingController();
   TextEditingController timeinputTo = TextEditingController();
   late TextEditingController nameController = TextEditingController();
+  late TextEditingController paiedController = TextEditingController();
+  late TextEditingController offerController = TextEditingController();
+  late TextEditingController commentController = TextEditingController();
+  String? salary;
+
+
   List<String> selectedItems = [];
+  List<String> selectedItemsPrice = [];
+
   String? formattedDate;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print("___________________---------------------");
     print(widget.item);
@@ -77,7 +87,6 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
               canPop: false,
               child: BlocConsumer<CalenderCubit, CalenderState>(
                 listener: (context, state) {
-                  // TODO: implement listener
                 },
                 builder: (context, state) {
                   var calenderCubit = CalenderCubit.get(context);
@@ -368,26 +377,35 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                                                 'Free Times on ${_selectedDate.toString().split(' ')[0]}',
                                                                               ),
                                                                               const SizedBox(height: 8),
-                                                                              SizedBox(
-                                                                                height: 480,
-                                                                                width: 200,
-                                                                                child: ListView.builder(
-                                                                                  itemCount: calenderCubit.availableTime.length,
-                                                                                  itemBuilder: (context, index) {
-                                                                                    if (index < calenderCubit.availableTime.length) {
-                                                                                      print(calenderCubit.availableTime[index].toString());
-                                                                                      return (state is GetAvailableTimeLoading)
-                                                                                          ? const CustomLoadingIndicator()
-                                                                                          : ListTile(
-                                                                                              title: Text(" متاح الساعه  :${calenderCubit.availableTime[index]}"),
+                                                                              FutureBuilder(
+                                                                                future: Future.delayed(const Duration(seconds: 2)),
+                                                                                builder: (context, snapshot) {
+                                                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                                    return CircularProgressIndicator(); // Display a loading indicator while waiting
+                                                                                  } else {
+                                                                                    return SizedBox(
+                                                                                      height: 480,
+                                                                                      width: 200,
+                                                                                      child: ListView.builder(
+                                                                                        itemCount: calenderCubit.availableTime.length,
+                                                                                        itemBuilder: (context, index) {
+                                                                                          if (index < calenderCubit.availableTime.length) {
+                                                                                            print(calenderCubit.availableTime[index].toString());
+                                                                                            return (state is GetAvailableTimeLoading)
+                                                                                                ? const CustomLoadingIndicator()
+                                                                                                : ListTile(
+                                                                                              title: Text("متاح الساعة: ${calenderCubit.availableTime[index]}"),
                                                                                               // ... other code
                                                                                             );
-                                                                                    } else {
-                                                                                      // Handle the case when the index is out of bounds
-                                                                                      return const SizedBox.shrink(); // or another widget
-                                                                                    }
-                                                                                  },
-                                                                                ),
+                                                                                          } else {
+                                                                                            // Handle the case when the index is out of bounds
+                                                                                            return const SizedBox.shrink(); // or another widget
+                                                                                          }
+                                                                                        },
+                                                                                      ),
+                                                                                    );
+                                                                                  }
+                                                                                },
                                                                               )
                                                                               // _buildFreeTimes(),
                                                                             ],
@@ -474,7 +492,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                               ],
                                             ),
                                             const SizedBox(
-                                              height: 50,
+                                              height: 10,
                                             ),
                                             Row(
                                               children: [
@@ -512,6 +530,103 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                         ),
                                                       ),
                                                     ),
+                                                      // باقي تفاصيل الحجز
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w),
+                                                    //   child: const Text(
+                                                    //     "القيمه المدفوعه",
+                                                    //     style: TextStyle(
+                                                    //         fontWeight:
+                                                    //         FontWeight
+                                                    //             .w600),
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w,
+                                                    //       vertical: 20.h),
+                                                    //   child: SizedBox(
+                                                    //     width: 220,
+                                                    //     child:
+                                                    //     CustomTextFormField(
+                                                    //       controller:
+                                                    //       paiedController,
+                                                    //       padding:
+                                                    //       EdgeInsets.only(
+                                                    //           bottom: 22.h,
+                                                    //           left: 10.w,
+                                                    //           right: 10.w),
+                                                    //       height: 70.h,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w),
+                                                    //   child: const Text(
+                                                    //     "عروض",
+                                                    //     style: TextStyle(
+                                                    //         fontWeight:
+                                                    //         FontWeight
+                                                    //             .w600),
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w,
+                                                    //       vertical: 20.h),
+                                                    //   child: SizedBox(
+                                                    //     width: 220,
+                                                    //     child:
+                                                    //     CustomTextFormField(
+                                                    //       controller:
+                                                    //       offerController,
+                                                    //       padding:
+                                                    //       EdgeInsets.only(
+                                                    //           bottom: 22.h,
+                                                    //           left: 10.w,
+                                                    //           right: 10.w),
+                                                    //       height: 70.h,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w),
+                                                    //   child: const Text(
+                                                    //     "تعليقات",
+                                                    //     style: TextStyle(
+                                                    //         fontWeight:
+                                                    //         FontWeight
+                                                    //             .w600),
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //   EdgeInsets.symmetric(
+                                                    //       horizontal: 70.w,
+                                                    //       vertical: 20.h),
+                                                    //   child: SizedBox(
+                                                    //     width: 220,
+                                                    //     child:
+                                                    //     CustomTextFormField(
+                                                    //       controller:
+                                                    //       commentController,
+                                                    //       padding:
+                                                    //       EdgeInsets.only(
+                                                    //           bottom: 22.h,
+                                                    //           left: 10.w,
+                                                    //           right: 10.w),
+                                                    //       height: 70.h,
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                   ],
                                                 ),
                                                 // Column(
@@ -740,7 +855,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                 //     )
                                                 //   ],
                                                 // ),
-
+//
                                                 SizedBox(
                                                   height: 500,
                                                   width: 300,
@@ -843,111 +958,116 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                                       ),
                                                     ),
                                                     const SizedBox(
-                                                      height: 20,
+                                                      height: 10,
                                                     ),
-                                                    Container(
-                                                      height: 300,
-                                                      width: 300,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20.r),
-                                                      ),
-                                                      //                               ListView.builder(
-                                                      //   shrinkWrap: true,
-                                                      //   physics: NeverScrollableScrollPhysics(),
-                                                      //   itemCount: addOp.additionalOptions.length,
-                                                      //   itemBuilder: (context, index) {
-                                                      //     final option = addOp.additionalOptions[index];
-                                                      //     final itemName = option.name.toString();
-                                                      //     final itemPrice = option.price.toString();
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(right: 20.0),
+                                                      child: Container(
+                                                        height: 20.h,
+                                                        alignment: AlignmentDirectional.topStart,
+                                                        child: ListView.builder(
+                                                          shrinkWrap: true,
+                                                          itemCount: addOp.additionalOptions.length,
+                                                          itemBuilder: (context, index) {
+                                                            final option = addOp.additionalOptions[index];
+                                                            final itemName = option.name.toString();
+                                                            final itemPrice = option.price.toString();
 
-                                                      //     return CheckboxListTile(
-                                                      //       title: Text(
-                                                      //         '$itemPrice   $itemName',
-                                                      //         style: TextStyle(
-                                                      //           color: Colors.indigo,
-                                                      //           fontFamily: 'Cairo',
-                                                      //           fontWeight: FontWeight.bold,
-                                                      //           fontSize: 20.sp,
-                                                      //         ),
-                                                      //       ),
-                                                      //       value: selectedItems.contains(itemName),
-                                                      //       onChanged: (value) {
-                                                      //         setState(() {
-                                                      //           if (value == true) {
-                                                      //             selectedItems.add(itemName);
-                                                      //           } else {
-                                                      //             selectedItems.remove(itemName);
-                                                      //           }
-                                                      //         });
-                                                      //       },
-                                                      //     );
-                                                      //   },
-                                                      // ),
-
-                                                      child: ListView.builder(
-                                                        itemCount: addOp
-                                                            .additionalOptions
-                                                            .length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          final option = addOp
-                                                                  .additionalOptions[
-                                                              index];
-                                                          final itemName =
-                                                              option.name
-                                                                  .toString();
-                                                          final itemPrice =
-                                                              option.price
-                                                                  .toString();
-
-                                                          return CheckboxListTile(
-                                                            title: Text(
-                                                              "$itemName و سعره : $itemPrice",
-                                                              style: TextStyle(
-                                                                  color: checkedItems[
-                                                                          index]
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black),
-                                                            ),
-                                                            contentPadding:
-                                                                EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        20.w,
-                                                                    vertical:
-                                                                        8.h),
-                                                            tileColor:
-                                                                checkedItems[
-                                                                        index]
-                                                                    ? Colors
-                                                                        .blueGrey
-                                                                    : null,
-                                                            value: checkedItems[
-                                                                index],
-                                                            onChanged:
-                                                                (bool? value) {
-                                                              setState(() {
-                                                                if (value ==
-                                                                    true) {
-                                                                  selectedItems.add(
-                                                                      itemName);
-                                                                } else {
-                                                                  selectedItems
-                                                                      .remove(
-                                                                          itemName);
-                                                                }
-                                                                checkedItems[
-                                                                        index] =
-                                                                    value!;
-                                                              });
-                                                            },
-                                                          );
-                                                        },
+                                                            return CheckboxListTile(
+                                                              title: Text(
+                                                                'السعر : $itemPrice , $itemName ',
+                                                                style: TextStyle(
+                                                                  color: Colors.indigo,
+                                                                  fontFamily: 'Cairo',
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 20.sp,
+                                                                ),
+                                                              ),
+                                                              value: selectedItems.contains(itemName),
+                                                              onChanged: (value) {
+                                                                setState(() {
+                                                                  if (value == true) {
+                                                                    selectedItems.add(itemName);
+                                                                    selectedItemsPrice.add(itemPrice);
+                                                                  } else {
+                                                                    selectedItems.remove(itemName);
+                                                                    selectedItemsPrice.add(itemPrice);
+                                                                  }
+                                                                });
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
+                                                    
+                                                    //الباكيدج و منها بيطلع ال salary
+
+                                                    // Padding(
+                                                    //   padding: const EdgeInsets.only(right: 50.0),
+                                                    //   child: Container(
+                                                    //     width: 80.w,
+                                                    //     height: 20.h,
+                                                    //     alignment: AlignmentDirectional.centerEnd,
+                                                    //     child: const Text(
+                                                    //       " اختيار المعاد ",
+                                                    //       textAlign: TextAlign.end,
+                                                    //       style: TextStyle(
+                                                    //         fontFamily: 'Cairo',
+                                                    //         color: AppColors.lightGrey,
+                                                    //         fontSize: 20,
+                                                    //         fontWeight: FontWeight.bold,
+                                                    //       ),
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+                                                    // BlocConsumer<ItemPackageCubit, ItemPackageState>(
+                                                    //   listener: (context, state) {
+                                                    //     // TODO: implement listener
+                                                    //   },
+                                                    //   builder: (context, state) {
+                                                    //     var cubit = ItemPackageCubit.get(context);
+                                                    //     return Padding(
+                                                    //       padding: const EdgeInsets.only(right: 20.0),
+                                                    //       child: Container(
+                                                    //         alignment: AlignmentDirectional.topStart,
+                                                    //         child: ListView.builder(
+                                                    //           shrinkWrap: true,
+                                                    //           itemCount: cubit.availabilityData.length,
+                                                    //           itemBuilder: (context, index) {
+                                                    //             final from = cubit
+                                                    //                 .availabilityData[index].availableTimeFrom;
+                                                    //             final to = cubit
+                                                    //                 .availabilityData[index].availableTimeTo;
+                                                    //             String price = cubit
+                                                    //                 .availabilityData[index].price
+                                                    //                 .toString();
+                                                    //             final id = cubit.availabilityData[index].id;
+                                                    //
+                                                    //             return RadioListTile(
+                                                    //               title: Text(
+                                                    //                 'من: $from , الي: $to , السعر :$price',
+                                                    //                 style: TextStyle(
+                                                    //                   fontFamily: 'Cairo',
+                                                    //                   color: Colors.black,
+                                                    //                   fontSize: 18.sp,
+                                                    //                 ),
+                                                    //               ),
+                                                    //               value: id,
+                                                    //               groupValue: selectedPackage,
+                                                    //               onChanged: (value) {
+                                                    //                 setState(() {
+                                                    //                   selectedPackage = id;
+                                                    //                   salary = price.toString();
+                                                    //                 });
+                                                    //               },
+                                                    //             );
+                                                    //           },
+                                                    //         ),
+                                                    //       ),
+                                                    //     );
+                                                    //   },
+                                                    // ),
                                                   ],
                                                 ),
                                               ],
@@ -977,15 +1097,8 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                               children: [
                                 ElevatedButton(
                                     onPressed: () {
-                                      // List<String> selectedItems = [];
-                                      // for (int i = 0;
-                                      //     i < checkedItems.length;
-                                      //     i++) {
-                                      //   if (checkedItems[i]) {
-                                      //     selectedItems.add(items[i]);
-                                      //   }
-                                      // }
-                                      // print(selectedItems);
+                                      // double totalSalary = calculateTotalSalary(
+                                      //     selectedItemsPrice, double.parse(salary!));
                                       ReservationCubit.get(context)
                                           .AddReservation(
                                         category_name: widget.categoryName,
@@ -1002,7 +1115,7 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
                                             .availabetime[0].availableTimeTo!,
                                         price: addReservationCubit
                                             .availabetime[0].price,
-                                        userid: '14',
+                                        userid: CacheHelper.getData(key: 'userId'),
                                       );
                                     },
                                     child: const Text("اضافه")),
@@ -1033,3 +1146,5 @@ class _AddReservationScreenState extends State<AddReservationScreen> {
     );
   }
 }
+
+
