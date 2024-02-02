@@ -94,12 +94,12 @@ class ReservationCubit extends Cubit<ReservationState> {
           hideLoading();
           emit(AddReservationFailure());
         }
+      } else {
+        showError("حدث خطأ ما");
+        print("حدث خطأ ما");
+        hideLoading();
+        emit(AddReservationFailure());
       }
-
-      showError("حدث خطأ ما");
-      print("حدث خطأ ما");
-      hideLoading();
-      emit(AddReservationFailure());
     } catch (e) {
       print('Exception occurred: $e');
       emit(AddReservationFailure());

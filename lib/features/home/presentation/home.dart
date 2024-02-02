@@ -65,16 +65,24 @@ class _HomeState extends State<Home> {
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold)),
                 )),
-            footer: Container(
-              height: 90.h,
-              width: double.infinity,
-              color: const Color(0xff444444),
-              child: Center(
+            footer: GestureDetector(
+              onTap: () {
+                context.pushNamedAndRemoveUntil(
+                    Routes.authScreen, (route) => false,
+                    predicate: (route) => false);
+              },
+              child: Container(
+                height: 90.h,
+                width: double.infinity,
+                color: const Color(0xff444444),
+                child: Center(
                   child: Text(
-                "signOut".tr(),
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-              )),
+                    "signOut".tr(),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
             ),
           ),
           body: SingleChildScrollView(
