@@ -1040,6 +1040,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                     // packageId: selectedPackageid,
                                     // materialStatue: '',
                                     // approveOfPayment: null);
+                                  } else {
+                                    showError("من فضلك املئ البيانات");
                                   }
                                 }),
                             SizedBox(
