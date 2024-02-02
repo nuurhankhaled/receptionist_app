@@ -59,6 +59,9 @@ class _ReservationScreenState extends State<ReservationScreen> {
     super.initState();
     print("___________________---------------------");
     print(widget.itemId);
+    ItemAdditionalOptionsCubit.get(context)
+        .getItemAdditionalOptions(id: widget.itemId);
+    ReservationCubit.get(context).getItemAvailabletime(id: widget.itemId);
   }
 
   bool isPhoneNumeric(String str) {
@@ -68,9 +71,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ItemAdditionalOptionsCubit.get(context)
-        .getItemAdditionalOptions(id: widget.itemId);
-    ReservationCubit.get(context).getItemAvailabletime(id: widget.itemId);
     print("yalaaaaahwwy");
     print(widget.categoryName);
     print(widget.itemId);
@@ -701,21 +701,15 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                   ),
                                                 ),
                                                 (addReservationCubit
-                                                        .availabetime
-                                                        .isNotEmpty)
-                                                    ? ListView.builder(
+                                                        .availabetime.isEmpty)
+                                                    ? const Text(
+                                                        "لا توجد مواعيد متاحة")
+                                                    : ListView.builder(
                                                         shrinkWrap: true,
                                                         physics:
                                                             const NeverScrollableScrollPhysics(),
-                                                        itemCount: (formattedDate !=
-                                                                null)
-                                                            ? addReservationCubit
-                                                                .availabetime
-                                                                .where((item) =>
-                                                                    item.date ==
-                                                                    formattedDate)
-                                                                .length
-                                                            : addReservationCubit
+                                                        itemCount:
+                                                            addReservationCubit
                                                                 .availabetime
                                                                 .length,
                                                         itemBuilder:
@@ -819,8 +813,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                           );
                                                         },
                                                       )
-                                                    : const Text(
-                                                        "لا توجد مواعيد متاحة")
                                               ],
                                             ),
                                           ),
