@@ -73,7 +73,7 @@ class ReservationCubit extends Cubit<ReservationState> {
       print("يالاهوووي");
 
       print("انا علي اخري");
-
+      print(formData.fields);
       var response = await MyDio.post(
           endPoint: "/reservations/add_reservation.php", data: formData);
       print("2 انا علي اخري");
@@ -141,6 +141,7 @@ class ReservationCubit extends Cubit<ReservationState> {
   List<DataofTime> availabetime = [];
 
   Future<void> getItemAvailabletime({required id}) async {
+    availabetime = [];
     print("here");
     emit(GetAvailableTimeReservationLoading());
     try {
@@ -158,7 +159,8 @@ class ReservationCubit extends Cubit<ReservationState> {
         var jsonResponse = AvailableTimeModel.fromJson(decodedData);
         print(jsonResponse.data![0].availableTimeFrom);
         if (jsonResponse.success!) {
-          availabetime = jsonResponse.data!;
+          availabetime =
+              jsonResponse.data!.where((item) => item.status == "0").toList();
           print(availabetime[0].availableTimeFrom);
           emit(GetAvailableTimeReservationSuccess());
         }

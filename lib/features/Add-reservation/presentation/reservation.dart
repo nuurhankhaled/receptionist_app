@@ -9,7 +9,6 @@ import 'package:intl/src/intl/date_format.dart';
 import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
 import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/core/widgets/custom_button.dart';
-import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
 import 'package:reservationapp_reseptionist/core/widgets/custom_text_form_field.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/add-reservation/cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/calender_cubit/calender_cubit.dart';
@@ -59,7 +58,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
   void initState() {
     super.initState();
     print("___________________---------------------");
-    print(widget.item);
+    print(widget.itemId);
   }
 
   bool isPhoneNumeric(String str) {
@@ -360,74 +359,19 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                                     'yyyy-MM-dd')
                                                                 .format(
                                                                     _selectedDate);
-
+                                                            print(
+                                                                "&&&&&&&&&&&&&&&&&&&&&&&&&&");
                                                             print(
                                                                 formattedDate);
+                                                            print(
+                                                                "&&&&&&&&&&&&&&&&&&&&&&&&&&");
                                                             calenderCubit
                                                                 .getDayAvailableTime(
                                                                     date:
                                                                         formattedDate,
                                                                     id: widget
                                                                         .itemId);
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return AlertDialog(
-                                                                  content:
-                                                                      Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Free Times on ${_selectedDate.toString().split(' ')[0]}',
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          height:
-                                                                              8),
-                                                                      FutureBuilder(
-                                                                        future: Future.delayed(const Duration(
-                                                                            seconds:
-                                                                                2)),
-                                                                        builder:
-                                                                            (context,
-                                                                                snapshot) {
-                                                                          if (snapshot.connectionState ==
-                                                                              ConnectionState.waiting) {
-                                                                            return const CircularProgressIndicator(); // Display a loading indicator while waiting
-                                                                          } else {
-                                                                            return SizedBox(
-                                                                              height: 480,
-                                                                              width: 200,
-                                                                              child: ListView.builder(
-                                                                                itemCount: calenderCubit.availableTime.length,
-                                                                                itemBuilder: (context, index) {
-                                                                                  if (index < calenderCubit.availableTime.length) {
-                                                                                    print(calenderCubit.availableTime[index].toString());
-                                                                                    return (state is GetAvailableTimeLoading)
-                                                                                        ? const CustomLoadingIndicator()
-                                                                                        : ListTile(
-                                                                                            title: Text("متاح الساعة: ${calenderCubit.availableTime[index]}"),
-                                                                                            // ... other code
-                                                                                          );
-                                                                                  } else {
-                                                                                    // Handle the case when the index is out of bounds
-                                                                                    return const SizedBox.shrink(); // or another widget
-                                                                                  }
-                                                                                },
-                                                                              ),
-                                                                            );
-                                                                          }
-                                                                        },
-                                                                      )
-                                                                      // _buildFreeTimes(),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
+                                                            context.pop();
                                                           } else {
                                                             // Show a message for past or current date
                                                             showDialog(
@@ -437,7 +381,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                                       context) {
                                                                 return const AlertDialog(
                                                                   content: Text(
-                                                                      "Cannot select a past or current date."),
+                                                                      "لا يمكن اختيار تاريخ قد مضي"),
                                                                 );
                                                               },
                                                             );
@@ -468,16 +412,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                                   fontSize: 20),
                                                         ),
                                                       ),
-                                                      // SizedBox(height: 16),
-                                                      // Text(
-                                                      //   'Free Times on ${_selectedDate.toString().split(' ')[0]}',
-                                                      //   style: TextStyle(
-                                                      //     fontSize: 16,
-                                                      //     fontWeight: FontWeight.bold,
-                                                      //   ),
-                                                      // ),
-                                                      // SizedBox(height: 8),
-                                                      // _buildFreeTimes(),
                                                     ],
                                                   ),
                                                 ),
@@ -766,101 +700,127 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                         fontSize: 20),
                                                   ),
                                                 ),
-                                                ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  itemCount: addReservationCubit
-                                                      .availabetime.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return RadioListTile(
-                                                      title: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                  "التاريخ  :  "),
-                                                              Text(addReservationCubit
-                                                                  .availabetime[
-                                                                      index]
-                                                                  .date!),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 10),
-                                                          Row(
-                                                            children: [
-                                                              const Text(
-                                                                  "السعر :"),
-                                                              Text(addReservationCubit
-                                                                  .availabetime[
-                                                                      index]
-                                                                  .price!),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 10),
-                                                          Row(
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  const Text(
-                                                                      "من :"),
-                                                                  Text(addReservationCubit
-                                                                      .availabetime[
-                                                                          index]
-                                                                      .availableTimeFrom!),
-                                                                ],
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              Row(
-                                                                children: [
-                                                                  const Text(
-                                                                      "الي :"),
-                                                                  Text(addReservationCubit
-                                                                      .availabetime[
-                                                                          index]
-                                                                      .availableTimeTo!),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      value: index,
-                                                      groupValue:
-                                                          selectedTimeIndex,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedPackageid =
-                                                              addReservationCubit
-                                                                  .availabetime[
-                                                                      index]
-                                                                  .id!;
-                                                          print(
-                                                              "a7eeeeeeeeeeeeeehhhh");
-                                                          print(
-                                                              selectedPackageid);
-                                                          print(
-                                                              "))))))*******************");
-                                                          print(
-                                                              selectedTimeIndex);
-                                                          selectedTimeIndex =
-                                                              value!;
-                                                        });
-                                                      },
-                                                    );
-                                                  },
-                                                ),
+                                                (addReservationCubit
+                                                        .availabetime
+                                                        .isNotEmpty)
+                                                    ? ListView.builder(
+                                                        shrinkWrap: true,
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        itemCount: (formattedDate !=
+                                                                null)
+                                                            ? addReservationCubit
+                                                                .availabetime
+                                                                .where((item) =>
+                                                                    item.date ==
+                                                                    formattedDate)
+                                                                .length
+                                                            : addReservationCubit
+                                                                .availabetime
+                                                                .length,
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index) {
+                                                          var availableTime = (formattedDate !=
+                                                                  null)
+                                                              ? addReservationCubit
+                                                                  .availabetime
+                                                                  .where((item) =>
+                                                                      item.date ==
+                                                                      formattedDate)
+                                                                  .toList()
+                                                              : addReservationCubit
+                                                                  .availabetime;
+
+                                                          if (availableTime
+                                                              .isEmpty) {
+                                                            return const Text(
+                                                                "لا توجد مواعيد متاحة في هذا التاريخ");
+                                                          }
+
+                                                          return RadioListTile(
+                                                            title: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                        "التاريخ  :  "),
+                                                                    Text(availableTime[
+                                                                            index]
+                                                                        .date!),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 10),
+                                                                Row(
+                                                                  children: [
+                                                                    const Text(
+                                                                        "السعر :"),
+                                                                    Text(availableTime[
+                                                                            index]
+                                                                        .price!),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 10),
+                                                                Row(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        const Text(
+                                                                            "من :"),
+                                                                        Text(availableTime[index]
+                                                                            .availableTimeFrom!),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    Row(
+                                                                      children: [
+                                                                        const Text(
+                                                                            "الي :"),
+                                                                        Text(availableTime[index]
+                                                                            .availableTimeTo!),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            value: index,
+                                                            groupValue:
+                                                                selectedTimeIndex,
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                selectedPackageid =
+                                                                    availableTime[
+                                                                            index]
+                                                                        .id!;
+                                                                print(
+                                                                    "a7eeeeeeeeeeeeeehhhh");
+                                                                print(
+                                                                    selectedPackageid);
+                                                                print(
+                                                                    "))))))*******************");
+                                                                print(
+                                                                    selectedTimeIndex);
+                                                                selectedTimeIndex =
+                                                                    value!;
+                                                              });
+                                                            },
+                                                          );
+                                                        },
+                                                      )
+                                                    : const Text(
+                                                        "لا توجد مواعيد متاحة")
                                               ],
                                             ),
                                           ),
