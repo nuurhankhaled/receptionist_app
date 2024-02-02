@@ -1,17 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
 import 'package:reservationapp_reseptionist/core/routing/routes.dart';
-import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/add-reservation/cubit.dart';
-import 'package:reservationapp_reseptionist/features/Add-reservation/presentation/add-reservation.dart';
 import 'package:reservationapp_reseptionist/features/Dashboard/presentation/dashboard-screen.dart';
-import 'package:reservationapp_reseptionist/features/View-Additional-Options/business-logic/additional_options_cubit/additional_options_cubit.dart';
-import 'package:reservationapp_reseptionist/features/View-categories/business-logic/category_cubit/category_cubit.dart';
-import 'package:reservationapp_reseptionist/features/View-category-details/business-logic/category_cubit/category_items_cubit.dart';
 import 'package:reservationapp_reseptionist/features/home/business-logic/cubit/mainlayout_cubit.dart';
-import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_admin_scaffold/admin_scaffold.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -37,7 +32,7 @@ class _HomeState extends State<Home> {
                 route: '/dashboard',
                 icon: Icons.dashboard,
               ),
-              AdminMenuItem(
+              const AdminMenuItem(
                 icon: Icons.receipt,
                 title: 'عرض الاضافات',
                 route: "/viewExtras",
@@ -91,7 +86,7 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 20.h,
                 ),
-                DashBoardScreen(),
+                const DashBoardScreen(),
               ],
             ),
           )),

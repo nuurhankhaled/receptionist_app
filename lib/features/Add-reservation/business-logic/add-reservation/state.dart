@@ -26,5 +26,7 @@ class PickImageErrorState extends ReservationState {
 }
 
 class GetAvailableTimeReservationLoading extends ReservationState {}
+
 class GetAvailableTimeReservationSuccess extends ReservationState {}
+
 class GetAvailableTimeReservationError extends ReservationState {}

@@ -1,16 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
-import 'package:reservationapp_reseptionist/core/Api/endPoints.dart';
 import 'package:reservationapp_reseptionist/core/Api/my_http.dart';
 import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/data/models/available_time_model.dart';
+import 'package:reservationapp_reseptionist/features/View-users/data/models/acceptance-model.dart';
 
 part 'state.dart';
 
@@ -20,119 +18,88 @@ class ReservationCubit extends Cubit<ReservationState> {
 
   static ReservationCubit get(context) => BlocProvider.of(context);
 
-//   Future<void> AddReservation({
-//     required String name,
-//     required String category_name,
-//     required String itemId,
-//     required String time,
-//     required String paid,
-//     required String additionalOptions,
-//     required image,
-//     required String timeOfReservationfrom,
-//     required String timeOfReservationto,
-//     required price,
-//   }) async {
-//     emit(AddReservationLoading());
-//     showLoading();
-//     String fileName = image.path.split('/').last;
-//     FormData formData = FormData.fromMap({
-//       "user_id": 15,
-//       "category_name": category_name,
-//       "item_id": itemId,
-//       "package_id": 7,
-
-//       "time": time,
-//       "time_of_reservation_from": timeOfReservationfrom,
-//       "time_of_reservation_to": timeOfReservationto,
-//       "additional_options": additionalOptions,
-// // "approve_of_payment":""
-//       "document": await MultipartFile.fromFile(image.path, filename: fileName),
-//       "price": price,
-
-//       "paid": paid,
-
-//       "marital_status": "married",
-//       // "comment": "",
-//       // "offer": ""
-//     });
-
-//     http.Response response;
-//     try {
-//       response = await MyHttp.post(
-//         endPoint: EndPoints.addReservation,
-//         data: formData,
-//       );
-//       print('Name: $name');
-//       print('Response Status Code: ${response.statusCode}');
-//       if (response.statusCode == 200) {
-//         emit(AddReservationSuccess());
-//       } else {
-//         emit(AddReservationFailure());
-//       }
-//     } catch (e) {
-//       print('Exception occurred: $e');
-//       emit(AddReservationFailure());
-//     }
-//   }
-
-  Future<void> AddReservation({
+  Future<void> addReservation({
     required String userid,
-    required String category_name,
+    required String categoryName,
     required String itemId,
     required String time,
     required String paid,
+    required String packageId,
     required String additionalOptions,
+    required String materialStatue,
     required image,
+    required approveOfPayment,
     required String timeOfReservationfrom,
     required String timeOfReservationto,
     required price,
   }) async {
     emit(AddReservationLoading());
     showLoading();
-
-    String fileName = image.path.split('/').last;
-    final mimeTypeData = lookupMimeType(fileName)!.split('/');
+    print("واحد");
     try {
-      final http.MultipartRequest request = http.MultipartRequest(
-        'POST',
-        Uri.parse("${EndPoints.baseUrl}${EndPoints.addReservation}"),
-      );
-
-      request.fields.addAll({
+      String fileName = "";
+      if (image != null) {
+        fileName = image.path.split('/').last;
+      }
+      String approveOfPaymentName = "";
+      if (approveOfPayment != null) {
+        approveOfPaymentName = approveOfPayment.path.split('/').last;
+      }
+      print("اتنين");
+      FormData formData = FormData.fromMap({
+        "approve_of_payment": await MultipartFile.fromFile(
+            approveOfPayment.path,
+            filename: approveOfPaymentName),
         "user_id": userid,
-        "category_name": category_name,
+        "category_name": categoryName,
         "item_id": itemId,
-        "package_id": "7",
+        "package_id": packageId,
         "time": time,
         "time_of_reservation_from": timeOfReservationfrom,
         "time_of_reservation_to": timeOfReservationto,
         "additional_options": additionalOptions,
         "price": price,
         "paid": paid,
-        "marital_status": "married",
+        "marital_status": materialStatue,
       });
+      print("الحقونا");
 
-      final file = await http.MultipartFile.fromPath(
-        'document',
-        image.path,
-        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]),
-      );
+      if (fileName != "" || image != null) {
+        formData.files.add(MapEntry(
+          "document",
+          await MultipartFile.fromFile(image.path, filename: fileName),
+        ));
+      }
+      print("يالاهوووي");
 
-      request.files.add(file);
+      print("انا علي اخري");
 
-      try {
-        final response = await request.send();
-        print('Response Status Code: ${response.statusCode}');
+      var response = await MyDio.post(
+          endPoint: "/reservations/add_reservation.php", data: formData);
+      print("2 انا علي اخري");
 
-        if (response.statusCode == 200) {
+      print(response!.data);
+      if (response.statusCode == 200) {
+        var decodedData = json.decode(response.data);
+        var jsonResponse = AcceptanceModel.fromJson(decodedData);
+
+        if (jsonResponse.success == true) {
+          hideLoading();
+          showSuccess("تم تعديل المرفق بنجاح");
           emit(AddReservationSuccess());
         } else {
+          showError("حدث خطأ ما");
+          print(response.data);
+          print(response.statusCode);
+          hideLoading();
           emit(AddReservationFailure());
         }
-      } catch (e) {
-        print('Exception occurred: $e');
-        emit(AddReservationFailure());
       }
+
+      showError("حدث خطأ ما");
+      print("حدث خطأ ما");
+      hideLoading();
+      emit(AddReservationFailure());
     } catch (e) {
       print('Exception occurred: $e');
       emit(AddReservationFailure());
@@ -155,11 +122,27 @@ class ReservationCubit extends Cubit<ReservationState> {
     }
   }
 
+  File? pickedApproveOfPaymentImage;
+
+  pickApproveOfPaymentImage(ImageSource source, context) async {
+    try {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(source: source);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      pickedApproveOfPaymentImage = imageTemp;
+      emit(PickImageSuccessState());
+    } catch (e) {
+      print("failed to pick image : $e");
+      emit(PickImageErrorState(e.toString()));
+    }
+  }
+
   List<DataofTime> availabetime = [];
 
-  Future<void> getAvailabletime({required id}) async {
+  Future<void> getItemAvailabletime({required id}) async {
     print("here");
-
+    emit(GetAvailableTimeReservationLoading());
     try {
       var response = await MyDio.post(
         endPoint: "/item/get_item_available_time.php",
@@ -177,13 +160,30 @@ class ReservationCubit extends Cubit<ReservationState> {
         if (jsonResponse.success!) {
           availabetime = jsonResponse.data!;
           print(availabetime[0].availableTimeFrom);
-        } else {}
+          emit(GetAvailableTimeReservationSuccess());
+        }
       } else {
         print(response.data);
         print(response.statusCode);
+        emit(GetAvailableTimeReservationError());
       }
     } catch (e) {
-      print(e);
+      var response = await MyDio.post(
+        endPoint: "/item/get_item_available_time.php",
+        data: {
+          "item_id": id,
+        },
+      );
+      print("----------------------------------");
+      print(response!.statusCode);
+      if (response.statusCode == 200) {
+        availabetime = [];
+        print("fadyaaaa");
+        emit(GetAvailableTimeReservationSuccess());
+      } else {
+        print(e);
+        emit(GetAvailableTimeReservationError());
+      }
     }
   }
 }

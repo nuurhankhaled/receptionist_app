@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:reservationapp_reseptionist/core/routing/args/resrvation_args.dart';
-import 'package:reservationapp_reseptionist/core/routing/routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
-import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/item_additional_options_cubit/additional_options_cubit.dart';
-import 'package:reservationapp_reseptionist/features/View-category-details/business-logic/category_cubit/category_items_cubit.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
+import 'package:reservationapp_reseptionist/core/routing/args/resrvation_args.dart';
+import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
+import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/add-reservation/cubit.dart';
+import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/calender_cubit/calender_cubit.dart';
+import 'package:reservationapp_reseptionist/features/Add-reservation/business-logic/item_additional_options_cubit/additional_options_cubit.dart';
 import 'package:reservationapp_reseptionist/features/Add-reservation/data/models/items-additional-options-model.dart';
+import 'package:reservationapp_reseptionist/features/Add-reservation/presentation/reservation.dart';
+import 'package:reservationapp_reseptionist/features/View-category-details/business-logic/category_cubit/category_items_cubit.dart';
 
 class ViewCategoryDetails extends StatelessWidget {
   String title;
@@ -68,8 +69,33 @@ class ViewCategoryDetails extends StatelessWidget {
                           print(additionalOptions.length);
                           return InkWell(
                             onTap: () {
-                              context.pushNamed(Routes.addReservationScreen,
-                                  arguments: args);
+                              // context.pushNamed(Routes.addReservationScreen,
+                              //     arguments: args);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MultiBlocProvider(
+                                            providers: [
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    ItemAdditionalOptionsCubit(),
+                                              ),
+                                              BlocProvider(
+                                                  create: (context) =>
+                                                      CalenderCubit()),
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    ReservationCubit(),
+                                              ),
+                                            ],
+                                            child: ReservationScreen(
+                                              categoryName: cubit
+                                                  .categorieItems[index]
+                                                  .categoryName!,
+                                              itemId: cubit
+                                                  .categorieItems[index].id!,
+                                            ),
+                                          )));
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -79,7 +105,7 @@ class ViewCategoryDetails extends StatelessWidget {
                               child: Center(
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     CachedNetworkImage(
                                       imageUrl:
                                           cubit.categorieItems[index].logo!,
@@ -101,7 +127,7 @@ class ViewCategoryDetails extends StatelessWidget {
                                       errorWidget: (context, url, error) =>
                                           const Icon(Icons.error),
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10.w),

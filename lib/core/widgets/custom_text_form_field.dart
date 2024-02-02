@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../theming/colors.dart';
-
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final String? labelText;
@@ -94,11 +92,11 @@ class CustomTextFormField extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
           border: Border.all(
-            color: borderColor ?? Colors.grey[200]!,
+            color: borderColor ?? Colors.grey[300]!,
             width: borderWidth ?? 1.sp,
           ),
           borderRadius: borderRadius ?? BorderRadius.circular(10.sp),
-          color: backgroundColor ?? Colors.grey[200]!),
+          color: backgroundColor ?? Colors.grey[300]!),
       child: Center(
         child: TextFormField(
           style: textStyle,
