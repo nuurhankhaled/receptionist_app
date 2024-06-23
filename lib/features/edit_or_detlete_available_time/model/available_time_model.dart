@@ -1,10 +1,10 @@
-class ReservationsModel {
+class AvailableTimeModel {
   bool? success;
   List<Data>? data;
 
-  ReservationsModel({this.success, this.data});
+  AvailableTimeModel({this.success, this.data});
 
-  ReservationsModel.fromJson(Map<String, dynamic> json) {
+  AvailableTimeModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
       data = <Data>[];
@@ -26,62 +26,53 @@ class ReservationsModel {
 
 class Data {
   String? id;
-  String? userId;
-  String? categoryName;
   String? itemId;
-  String? time;
-  String? timeOfReservation;
-  String? additionalOptions;
+  String? availableTimeFrom;
+  String? availableTimeTo;
+  String? day;
   String? status;
-  String? document;
-  String? approveOfPayment;
-  String? paid;
+  String? price;
   Item? item;
+  Category? category;
 
   Data(
       {this.id,
-      this.userId,
-      this.categoryName,
       this.itemId,
-      this.time,
-      this.timeOfReservation,
-      this.additionalOptions,
+      this.availableTimeFrom,
+      this.availableTimeTo,
+      this.day,
       this.status,
-      this.document,
-      this.approveOfPayment,
-      this.paid,
-      this.item});
+      this.price,
+      this.item,
+      this.category});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    userId = json['user_id'];
-    categoryName = json['category_name'];
     itemId = json['item_id'];
-    time = json['time'];
-    timeOfReservation = json['time_of_reservation'];
-    additionalOptions = json['additional_options'];
+    availableTimeFrom = json['available_time_from'];
+    availableTimeTo = json['available_time_to'];
+    day = json['day'];
     status = json['status'];
-    document = json['document'];
-    approveOfPayment = json['approve_of_payment'];
-    paid = json['paid'];
-    item = json['item'] != null ? new Item.fromJson(json['item']) : null;
+    price = json['price'];
+    item = json['item'] != null ? Item.fromJson(json['item']) : null;
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['user_id'] = userId;
-    data['category_name'] = categoryName;
     data['item_id'] = itemId;
-    data['time'] = time;
-    data['time_of_reservation'] = timeOfReservation;
-    data['additional_options'] = additionalOptions;
+    data['available_time_from'] = availableTimeFrom;
+    data['available_time_to'] = availableTimeTo;
+    data['day'] = day;
     data['status'] = status;
-    data['document'] = document;
-    data['approve_of_payment'] = approveOfPayment;
-    data['paid'] = paid;
+    data['price'] = price;
     if (item != null) {
       data['item'] = item!.toJson();
+    }
+    if (category != null) {
+      data['category'] = category!.toJson();
     }
     return data;
   }
@@ -98,11 +89,9 @@ class Item {
   String? type;
   String? description;
   String? address;
-  String? availableTimeFrom;
-  String? availableTimeTo;
+  String? devices;
   String? status;
   String? offer;
-  String? price;
 
   Item(
       {this.id,
@@ -115,11 +104,9 @@ class Item {
       this.type,
       this.description,
       this.address,
-      this.availableTimeFrom,
-      this.availableTimeTo,
+      this.devices,
       this.status,
-      this.offer,
-      this.price});
+      this.offer});
 
   Item.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -132,11 +119,9 @@ class Item {
     type = json['type'];
     description = json['description'];
     address = json['address'];
-    availableTimeFrom = json['available_time_from'];
-    availableTimeTo = json['available_time_to'];
+    devices = json['devices'];
     status = json['status'];
     offer = json['offer'];
-    price = json['price'];
   }
 
   Map<String, dynamic> toJson() {
@@ -151,11 +136,31 @@ class Item {
     data['type'] = type;
     data['description'] = description;
     data['address'] = address;
-    data['available_time_from'] = availableTimeFrom;
-    data['available_time_to'] = availableTimeTo;
+    data['devices'] = devices;
     data['status'] = status;
     data['offer'] = offer;
-    data['price'] = price;
+    return data;
+  }
+}
+
+class Category {
+  String? id;
+  String? name;
+  String? image;
+
+  Category({this.id, this.name, this.image});
+
+  Category.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['image'] = image;
     return data;
   }
 }

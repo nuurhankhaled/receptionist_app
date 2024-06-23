@@ -140,7 +140,7 @@ class AppRouter {
           child: BlocProvider(
             create: (context) =>
                 AdditionalOptionsCubit()..getAllAdditionalOptions(),
-            child: ViewAdditionalOptionsScreen(),
+            child: const ViewAdditionalOptionsScreen(),
           ),
         );
 

@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:dio/dio.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:reservationapp_reseptionist/Core/Api/endPoints.dart';
 import 'package:reservationapp_reseptionist/core/Api/my_http.dart';
 import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/features/View-Waiting-Reservations/data/models/reservations-model.dart';
 import 'package:reservationapp_reseptionist/features/View-users/data/models/acceptance-model.dart';
+
 part 'reservations_state.dart';
 
 class ReservationsCubit extends Cubit<ReservationsState> {
@@ -16,10 +15,12 @@ class ReservationsCubit extends Cubit<ReservationsState> {
   static ReservationsCubit get(context) => BlocProvider.of(context);
   static const Duration timeoutDuration = Duration(seconds: 30);
 
-  List<Data> waintingReservations = [];
-  List<Data> acceptedReservations = [];
+  List<ReservationData> waintingReservations = [];
+  List<ReservationData> acceptedReservations = [];
 
   Future<void> getReservations() async {
+    waintingReservations = [];
+    acceptedReservations = [];
     emit(GetReservationsLoading());
     try {
       var response = await MyDio.get(endPoint: EndPoints.getReservations);
@@ -31,12 +32,16 @@ class ReservationsCubit extends Cubit<ReservationsState> {
         if (jsonResponse.success!) {
           print("categories");
           for (var reservation in jsonResponse.data!) {
+            print(reservation.status);
             if (reservation.status == "0") {
               waintingReservations.add(reservation);
             } else {
               acceptedReservations.add(reservation);
             }
           }
+          print(waintingReservations.length);
+          print("annnnnnnnnaaaaaaaaaa zhhhhhhhh222222222t");
+          print(acceptedReservations.length);
           emit(GetReservationsSuccess());
         } else {
           print(response.data);

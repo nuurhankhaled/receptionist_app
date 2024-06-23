@@ -24,6 +24,6 @@ class EndPoints {
   static const String declineReservation =
       '/reservations/delete_reservation.php';
   static const String getItemAdditionalOptions = '/item/get_item_options.php';
-  static const itemPackage ='/item/get_item_available_time.php';
-
+  static const itemPackage = '/item/get_item_available_time.php';
+  static const String editTime = '/item/edit_available_time.php';
 }

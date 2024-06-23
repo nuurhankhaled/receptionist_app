@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:dio/dio.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:reservationapp_reseptionist/core/Api/my_http.dart';
 import 'package:reservationapp_reseptionist/core/utilies/easy_loading.dart';
 import 'package:reservationapp_reseptionist/features/View-Additional-Options/data/models/additional-options-model.dart';
+
 import '../../../../Core/Api/endPoints.dart'; // Import the library that defines 'getCategories'.
-import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
+
 part 'additional_options_state.dart';
 
 class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
@@ -17,13 +16,13 @@ class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
   static const Duration timeoutDuration = Duration(seconds: 30);
 
   Future<void> AddAdditionalOptions(
-      {required categoryId, required name, required price, context}) async {
+      {required itemId, required name, required price, context}) async {
     emit(AddAdditionalOptionsLoading());
     showLoading();
     try {
       var response =
           await MyDio.post(endPoint: EndPoints.addAdditionalOptions, data: {
-        "category_id": categoryId,
+        "item_id": itemId,
         "name": name,
         "price": price,
       });
@@ -77,6 +76,7 @@ class AdditionalOptionsCubit extends Cubit<AdditionalOptionsState> {
     try {
       if (response!.statusCode == 200) {
         showSuccess("تم حذف المرفق بنجاح");
+        await getAllAdditionalOptions();
         emit(DeleteAdditionalOptionsSuccess());
       } else {
         showError("حدث خطأ ما");

@@ -24,25 +24,25 @@ Future<void> main() async {
     ),
   );
 
-  await windowManager.ensureInitialized();
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(1385, 780), // Use a default size
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    // fullScreen: true,
-    windowButtonVisibility: true,
-    maximumSize: Size(1400, 780),
-    minimumSize: Size(1400, 780),
-  );
+  // await windowManager.ensureInitialized();
+  // WindowOptions windowOptions = const WindowOptions(
+  //   size: Size(1385, 780), // Use a default size
+  //   center: true,
+  //   backgroundColor: Colors.transparent,
+  //   skipTaskbar: false,
+  //   // fullScreen: true,
+  //   windowButtonVisibility: true,
+  //   maximumSize: Size(1400, 780),
+  //   minimumSize: Size(1400, 780),
+  // );
 
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-    await windowManager.isResizable();
-    await windowManager.isMovable();
-    await windowManager.center();
-  });
+  // windowManager.waitUntilReadyToShow(windowOptions, () async {
+  //   await windowManager.show();
+  //   await windowManager.focus();
+  //   await windowManager.isResizable();
+  //   await windowManager.isMovable();
+  //   await windowManager.center();
+  // });
 
   runApp(EasyLocalization(
       path: "assets/languages",
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
           darkTheme: darkTheme,
           themeMode: ThemeMode.light,
           builder: EasyLoading.init(),
-          initialRoute: Routes.authScreen,
+          initialRoute: Routes.mainlayout,
         ),
       ),
     );

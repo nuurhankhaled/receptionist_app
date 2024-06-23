@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
 import 'package:reservationapp_reseptionist/core/routing/routes.dart';
 import 'package:reservationapp_reseptionist/features/Dashboard/presentation/dashboard-screen.dart';
+import 'package:reservationapp_reseptionist/features/edit_or_detlete_available_time/presentation/edit_or_delete_available_time.dart';
 import 'package:reservationapp_reseptionist/features/home/business-logic/cubit/mainlayout_cubit.dart';
 
 class Home extends StatefulWidget {
@@ -33,9 +34,24 @@ class _HomeState extends State<Home> {
                 icon: Icons.dashboard,
               ),
               const AdminMenuItem(
+                icon: Icons.timeline_rounded,
+                title: "عرض اوقات الوحدات",
+                route: '/Availabletimes',
+              ),
+              const AdminMenuItem(
                 icon: Icons.receipt,
-                title: 'عرض الاضافات',
+                title: 'عرض الاضافات الوحدات',
                 route: "/viewExtras",
+              ),
+              const AdminMenuItem(
+                icon: Icons.receipt_long_rounded,
+                title: ' عرض الحجوزات المنتظرة',
+                route: "/viewWaitingReservations",
+              ),
+              const AdminMenuItem(
+                icon: Icons.receipt_long_rounded,
+                title: ' عرض الحجوزات المقبولة و المنتهيه',
+                route: "/viewReservations",
               ),
             ],
             selectedRoute: "/dashboard",
@@ -44,11 +60,21 @@ class _HomeState extends State<Home> {
                 mainlayoutCubit.changeSelectedItem(item.route!);
                 print(mainlayoutCubit.selectedItem);
                 switch (item.route) {
-                  case "/addItem":
-                    context.pushNamed(Routes.addItemScren);
-                    break;
                   case "/viewExtras":
                     context.pushNamed(Routes.viewAdditionalOptionsScreen);
+                    break;
+                  case "/viewWaitingReservations":
+                    context.pushNamed(Routes.viewWatiningReservationsScreen);
+                    break;
+                  case "/viewReservations":
+                    context.pushNamed(Routes.viewReservationsScreen);
+                    break;
+                  case "/Availabletimes":
+                    // context.pushNamed(Routes.viewReservationsScreen);
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return const ViewAvailableTime();
+                    }));
                     break;
                   default:
                     print('Route not handled: ${item.route}');

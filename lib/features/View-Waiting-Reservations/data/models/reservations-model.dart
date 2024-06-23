@@ -1,15 +1,15 @@
 class ReservationsModel {
   bool? success;
-  List<Data>? data;
+  List<ReservationData>? data;
 
   ReservationsModel({this.success, this.data});
 
   ReservationsModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <ReservationData>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(ReservationData.fromJson(v));
       });
     }
   }
@@ -24,11 +24,12 @@ class ReservationsModel {
   }
 }
 
-class Data {
+class ReservationData {
   String? id;
   String? userId;
   String? categoryName;
   String? itemId;
+  String? packageId;
   String? time;
   String? timeOfReservationFrom;
   String? timeOfReservationTo;
@@ -38,14 +39,20 @@ class Data {
   String? approveOfPayment;
   String? price;
   String? paid;
+  String? maritalStatus;
+  String? comments;
+  String? offer;
   Item? item;
   User? user;
+  Category? category;
+  AvailableTime? availableTime;
 
-  Data(
+  ReservationData(
       {this.id,
       this.userId,
       this.categoryName,
       this.itemId,
+      this.packageId,
       this.time,
       this.timeOfReservationFrom,
       this.timeOfReservationTo,
@@ -55,14 +62,20 @@ class Data {
       this.approveOfPayment,
       this.price,
       this.paid,
+      this.maritalStatus,
+      this.comments,
+      this.offer,
       this.item,
-      this.user});
+      this.user,
+      this.category,
+      this.availableTime});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ReservationData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     categoryName = json['category_name'];
     itemId = json['item_id'];
+    packageId = json['package_id'];
     time = json['time'];
     timeOfReservationFrom = json['time_of_reservation_from'];
     timeOfReservationTo = json['time_of_reservation_to'];
@@ -72,8 +85,16 @@ class Data {
     approveOfPayment = json['approve_of_payment'];
     price = json['price'];
     paid = json['paid'];
+    maritalStatus = json['marital_status'];
+    comments = json['comments'];
+    offer = json['offer'];
     item = json['item'] != null ? Item.fromJson(json['item']) : null;
     user = json['user'] != null ? User.fromJson(json['user']) : null;
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
+    availableTime = json['available_time'] != null
+        ? AvailableTime.fromJson(json['available_time'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -82,6 +103,7 @@ class Data {
     data['user_id'] = userId;
     data['category_name'] = categoryName;
     data['item_id'] = itemId;
+    data['package_id'] = packageId;
     data['time'] = time;
     data['time_of_reservation_from'] = timeOfReservationFrom;
     data['time_of_reservation_to'] = timeOfReservationTo;
@@ -91,11 +113,20 @@ class Data {
     data['approve_of_payment'] = approveOfPayment;
     data['price'] = price;
     data['paid'] = paid;
+    data['marital_status'] = maritalStatus;
+    data['comments'] = comments;
+    data['offer'] = offer;
     if (item != null) {
       data['item'] = item!.toJson();
     }
     if (user != null) {
       data['user'] = user!.toJson();
+    }
+    if (category != null) {
+      data['category'] = category!.toJson();
+    }
+    if (availableTime != null) {
+      data['available_time'] = availableTime!.toJson();
     }
     return data;
   }
@@ -112,12 +143,9 @@ class Item {
   String? type;
   String? description;
   String? address;
-  String? availableTimeFrom;
-  String? availableTimeTo;
   String? devices;
   String? status;
   String? offer;
-  String? price;
 
   Item(
       {this.id,
@@ -130,12 +158,9 @@ class Item {
       this.type,
       this.description,
       this.address,
-      this.availableTimeFrom,
-      this.availableTimeTo,
       this.devices,
       this.status,
-      this.offer,
-      this.price});
+      this.offer});
 
   Item.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -148,12 +173,9 @@ class Item {
     type = json['type'];
     description = json['description'];
     address = json['address'];
-    availableTimeFrom = json['available_time_from'];
-    availableTimeTo = json['available_time_to'];
     devices = json['devices'];
     status = json['status'];
     offer = json['offer'];
-    price = json['price'];
   }
 
   Map<String, dynamic> toJson() {
@@ -168,12 +190,9 @@ class Item {
     data['type'] = type;
     data['description'] = description;
     data['address'] = address;
-    data['available_time_from'] = availableTimeFrom;
-    data['available_time_to'] = availableTimeTo;
     data['devices'] = devices;
     data['status'] = status;
     data['offer'] = offer;
-    data['price'] = price;
     return data;
   }
 }
@@ -187,6 +206,7 @@ class User {
   String? email;
   String? password;
   String? status;
+  String? token;
 
   User(
       {this.id,
@@ -196,7 +216,8 @@ class User {
       this.type,
       this.email,
       this.password,
-      this.status});
+      this.status,
+      this.token});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -207,6 +228,7 @@ class User {
     email = json['email'];
     password = json['password'];
     status = json['status'];
+    token = json['token'];
   }
 
   Map<String, dynamic> toJson() {
@@ -219,6 +241,70 @@ class User {
     data['email'] = email;
     data['password'] = password;
     data['status'] = status;
+    data['token'] = token;
+    return data;
+  }
+}
+
+class Category {
+  String? id;
+  String? name;
+  String? image;
+
+  Category({this.id, this.name, this.image});
+
+  Category.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['image'] = image;
+    return data;
+  }
+}
+
+class AvailableTime {
+  String? id;
+  String? itemId;
+  String? availableTimeFrom;
+  String? availableTimeTo;
+  String? day;
+  String? status;
+  String? price;
+
+  AvailableTime(
+      {this.id,
+      this.itemId,
+      this.availableTimeFrom,
+      this.availableTimeTo,
+      this.day,
+      this.status,
+      this.price});
+
+  AvailableTime.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    itemId = json['item_id'];
+    availableTimeFrom = json['available_time_from'];
+    availableTimeTo = json['available_time_to'];
+    day = json['day'];
+    status = json['status'];
+    price = json['price'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['item_id'] = itemId;
+    data['available_time_from'] = availableTimeFrom;
+    data['available_time_to'] = availableTimeTo;
+    data['day'] = day;
+    data['status'] = status;
+    data['price'] = price;
     return data;
   }
 }
