@@ -1,7 +1,7 @@
 class CalenderModel {
   bool success;
   List<String>? availableTime;
-  double percent;
+  dynamic percent;
 
   CalenderModel({
     required this.success,

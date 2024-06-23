@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:reservationapp_reseptionist/core/routing/routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reservationapp_reseptionist/core/helpers/extensions.dart';
+import 'package:reservationapp_reseptionist/core/routing/routes.dart';
+import 'package:reservationapp_reseptionist/core/widgets/custom_loading_indecator.dart';
 import 'package:reservationapp_reseptionist/features/View-categories/business-logic/category_cubit/category_cubit.dart';
 
 class ViewCategoriesScreen extends StatelessWidget {
@@ -18,6 +17,7 @@ class ViewCategoriesScreen extends StatelessWidget {
         // TODO: implement listener
       },
       builder: (context, state) {
+                    
         var categoryCubit = CategoryCubit.get(context);
         return Scaffold(
           appBar: AppBar(
@@ -56,7 +56,7 @@ class ViewCategoriesScreen extends StatelessWidget {
                           child: Center(
                             child: Column(
                               children: [
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 CachedNetworkImage(
                                   imageUrl:
                                       categoryCubit.categories[index].image!,
@@ -77,7 +77,7 @@ class ViewCategoriesScreen extends StatelessWidget {
                                   errorWidget: (context, url, error) =>
                                       const Icon(Icons.error),
                                 ),
-                                SizedBox(height: 5),
+                                const SizedBox(height: 5),
                                 Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 10.w),
